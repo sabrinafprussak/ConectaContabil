@@ -1,0 +1,6 @@
+{
+  "name": "ConectaContábil",
+  "description": "Plataforma prática de gestão e organização fiscal para MEIs, microempresas e empresas de pequeno porte.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
