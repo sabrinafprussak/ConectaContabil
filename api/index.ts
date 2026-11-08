@@ -163,7 +163,8 @@ export default async function handler(req: any, res: any) {
         uma resposta segura, utilize a mensagem padrão
         de insuficiência do ConectaContábil.
         
-        RESPOSTAS DE REFERÊNCIA PRIORITÁRIAS:
+        QUANDO FOREM FEITAS ESSAS PERGUNTAS A SEGUIR, VOCÊ DEVE RESPONDER EXATAMENTE CONFORME ORIENTAÇÃO TAMBÉM A SEGUIR.
+        CASO AS PERGUNTAS FEITAS NÃO FOREM ELAS, ENTÃO SIGA PELAS FONTES AUTORIZADAS, JÁ DEFINIDAS ACIMA.
         
         PERGUNTA 1: O que é CFOP?
         
