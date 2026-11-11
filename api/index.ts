@@ -156,6 +156,83 @@ const fontesAutorizadas = [
   "https://www.sefaz.pe.gov.br/"
 ];
 
+// Referências institucionais para consulta.
+// Estes links não significam que os documentos foram consultados pelo Gemini.
+type Referencia = { name: string; url: string };
+
+function referenciasParaConsulta(
+  pergunta: string,
+  historico: Mensagem[]
+): Referencia[] {
+  const normalizada = normalizar(pergunta);
+  const ultimaPergunta = [...historico]
+    .reverse()
+    .find(item => item.role === "user");
+  const contexto = normalizar(ultimaPergunta?.parts[0]?.text ?? "");
+
+  // Uma pergunta de continuação pode depender do assunto anterior.
+  const continuacao =
+    /^(e |qual |quais |como |onde |quando |por que |porque |me |isso|esse|essa|ele|ela|dele|dela|tambem|e no)/.test(normalizada) &&
+    !/\b(cfop|icms|iss|mei|das|defis|ncm|nfse|nfs e|nfe|nf e|pis|cofins|ipi|cbs|ibs)\b/.test(normalizada);
+
+  const assunto = continuacao ? `${normalizada} ${contexto}` : normalizada;
+  const fontes: Referencia[] = [];
+  const adicionar = (name: string, url: string) => {
+    if (!fontes.some(f => f.url === url)) fontes.push({ name, url });
+  };
+
+  if (/\b(cfop|icms|icms st|difal|substituicao tributaria)\b/.test(assunto)) {
+    adicionar(
+      "CONFAZ — Legislação tributária",
+      "https://www.confaz.fazenda.gov.br/legislacao"
+    );
+  }
+
+  if (/\b(iss|servicos tributados)\b/.test(assunto)) {
+    adicionar(
+      "Planalto — Lei Complementar 116/2003",
+      "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp116.htm"
+    );
+  }
+
+  if (/\b(mei|microempreendedor|das|pgmei|defis|simples nacional|dasn|simei)\b/.test(assunto)) {
+    adicionar(
+      "Portal do Simples Nacional",
+      "https://www8.receita.fazenda.gov.br/SimplesNacional/"
+    );
+  }
+
+  if (/\b(nfs e|nfse|nota fiscal de servico|notas fiscais de servico)\b/.test(assunto)) {
+    adicionar(
+      "Portal Nacional da NFS-e",
+      "https://www.gov.br/nfse/pt-br"
+    );
+  }
+
+  if (/\b(nf e|nfe|nota fiscal eletronica|ncm|danfe)\b/.test(assunto)) {
+    adicionar(
+      "Portal Nacional da NF-e",
+      "https://www.nfe.fazenda.gov.br/portal/principal.aspx"
+    );
+  }
+
+  if (/\b(pis|cofins|irpf|irpj|imposto de renda|dctfweb|efd reinf|csll|ipi)\b/.test(assunto)) {
+    adicionar(
+      "Receita Federal",
+      "https://www.gov.br/receitafederal/pt-br"
+    );
+  }
+
+  if (/\b(ibs|cbs|reforma tributaria|imposto seletivo)\b/.test(assunto)) {
+    adicionar(
+      "Ministério da Fazenda — Reforma Tributária",
+      "https://www.gov.br/fazenda/pt-br/assuntos/reforma-tributaria"
+    );
+  }
+
+  return fontes.slice(0, 3);
+}
+
 const systemInstruction = `
 Você é o Assistente Fiscal ConectaContábil.
 
@@ -603,7 +680,10 @@ export default async function handler(
 
     return res.status(200).json({
       reply: resposta,
-      sources: [],
+      sources:
+        resposta === MENSAGEM_INSUFICIENCIA
+          ? []
+          : referenciasParaConsulta(message, historico),
       isLiveAi: true
     });
 
