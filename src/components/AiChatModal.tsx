@@ -296,7 +296,7 @@ Como posso ajudar sua empresa hoje?`,
                   {msg.sources && msg.sources.length > 0 && (
                     <div className="mt-3 pt-3 border-t border-neutral-100 text-[11px] space-y-1">
                       <span className="font-semibold text-neutral-600 block">
-                        Fontes Oficiais Verificadas:
+                        Referências oficiais para consulta:
                       </span>
 
                       <div className="flex flex-wrap gap-2">
